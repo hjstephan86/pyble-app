@@ -60,7 +60,7 @@ async def get_books_by_testament(
     description="Get detailed information about a specific Bible book"
 )
 async def get_book_info(
-    book_name: str = Path(..., description="Bible book name", example="Genesis"),
+    book_name: str = Path(..., description="Bible book name", examples="Genesis"),
     service: BibleService = Depends(get_bible_service)
 ):
     """Get information about a specific book"""
@@ -83,9 +83,9 @@ async def get_book_info(
     description="Get a specific Bible verse by book, chapter, and verse number"
 )
 async def get_verse(
-    book: str = Path(..., description="Bible book name", example="John"),
-    chapter: int = Path(..., ge=1, description="Chapter number", example=3),
-    verse: int = Path(..., ge=1, description="Verse number", example=16),
+    book: str = Path(..., description="Bible book name", examples="John"),
+    chapter: int = Path(..., ge=1, description="Chapter number", examples=3),
+    verse: int = Path(..., ge=1, description="Verse number", examples=16),
     translation: Translation = Query(Translation.KJV, description="Bible translation"),
     service: BibleService = Depends(get_bible_service)
 ):
@@ -173,8 +173,8 @@ async def delete_verse(
     description="Get all verses in a specific chapter"
 )
 async def get_chapter(
-    book: str = Path(..., description="Bible book name", example="John"),
-    chapter: int = Path(..., ge=1, description="Chapter number", example=3),
+    book: str = Path(..., description="Bible book name", examples="John"),
+    chapter: int = Path(..., ge=1, description="Chapter number", examples=3),
     translation: Translation = Query(Translation.KJV, description="Bible translation"),
     service: BibleService = Depends(get_bible_service)
 ):
@@ -201,9 +201,9 @@ async def get_chapter(
     description="Search for specific text in Bible verses with advanced filtering and pagination"
 )
 async def search_verses(
-    q: str = Query(..., min_length=settings.min_search_length, description="Search query", example="love"),
+    q: str = Query(..., min_length=settings.min_search_length, description="Search query", examples="love"),
     translation: Translation = Query(Translation.KJV, description="Bible translation"),
-    book: Optional[str] = Query(None, description="Limit search to specific book", example="John"),
+    book: Optional[str] = Query(None, description="Limit search to specific book", examples="John"),
     testament: Optional[Testament] = Query(None, description="Limit search to testament"),
     page: int = Query(1, ge=1, description="Page number"),
     per_page: int = Query(settings.default_page_size, ge=1, le=settings.max_page_size, description="Results per page"),
@@ -229,7 +229,7 @@ async def search_verses(
     description="Search by Bible reference (e.g., 'John 3:16' or 'Romans 8:28-30')"
 )
 async def search_by_reference(
-    ref: str = Query(..., description="Bible reference", example="John 3:16"),
+    ref: str = Query(..., description="Bible reference", examples="John 3:16"),
     translation: Translation = Query(Translation.KJV, description="Bible translation"),
     service: BibleService = Depends(get_bible_service)
 ):

@@ -1,20 +1,41 @@
-# Python Bible Application 📖
+# Python Bible Application
 
-Stop Docker Image\
-`sudo docker stop $(sudo docker ps -aq --filter ancestor=pyble-app) && sudo docker rm $(sudo docker ps -aq --filter ancestor=pyble-app)`
+A bible application built with **FastAPI** that follows **Spring Boot** architecture patterns. This application demonstrates how to transform a Java Spring Boot application into a Python equivalent while maintaining the same architectural principles.
 
-Remove Docker Image\
-`sudo docker rmi pyble-app`
+## Docker
 
-Build Docker Image\
-`sudo docker build -t pyble-app .`
+Stop Docker image\
+`docker stop $(sudo docker ps -aq --filter ancestor=pyble-app) && sudo docker rm $(sudo docker ps -aq --filter ancestor=pyble-app)`
 
-Start Docker Image\
-`sudo docker run -p 8080:8080 pyble-app`
+Remove Docker image\
+`docker rmi pyble-app`
 
-A modern Bible application built with **FastAPI** (Python) that follows **Spring Boot architecture patterns**. This application demonstrates how to transform a Java Spring Boot application into a Python equivalent while maintaining the same architectural principles.
+Build Docker image\
+`docker build -t pyble-app .`
 
-## 🌟 Features
+Start Docker image\
+`docker run -p 8080:8080 pyble-app`
+
+## Requirements Upgrade
+
+List outdated requirements\
+`pip list --outdated`
+
+Install outdated requirements\
+`pip list --outdated | awk 'NR > 2 {print $1}' | xargs pip install --upgrade`
+
+Freeze all requirements\
+`pip freeze > requirements.txt`
+
+## Unit Tests
+
+Run unit tests\
+`pytest`
+
+Run unit tests with coverage\
+`pytest --cov=.`
+
+## Features
 
 - **REST API** with automatic Swagger documentation
 - **Single source of truth** for Bible book names from data layer to UI
@@ -27,7 +48,7 @@ A modern Bible application built with **FastAPI** (Python) that follows **Spring
 - **Pagination and filtering** support
 - **Special verse features** (Random verse, Verse of the day)
 
-## 🏗️ Architecture
+## Architecture
 
 This application follows **Spring Boot architectural patterns** using Python equivalents:
 
@@ -42,7 +63,7 @@ This application follows **Spring Boot architectural patterns** using Python equ
 | JPA Repository | SQLAlchemy queries | Data access |
 | Maven `pom.xml` | `requirements.txt` | Dependency management |
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 pyble-app/
@@ -57,37 +78,17 @@ pyble-app/
 ├── templates/
 │   └── index.html
 ├── Dockerfile
-└── ...weitere Dateien
+└── ... other files
 ```
 
-## 🚀 Quick Start
-
-### 1. Install Dependencies
-
-```bash
-# Create virtual environment (recommended)
-python -m venv venv
-source venv/bin/activate  # Linux/Mac
-# venv\Scripts\activate   # Windows
-
-# Install dependencies
-pip install -r requirements.txt
-```
-
-### 2. Run the Application
-
-```bash
-python main.py
-```
-
-### 3. Access the Application
+## Access Application
 
 - **Web Interface**: http://localhost:8080/
 - **API Documentation**: http://localhost:8080/swagger
 - **Alternative Docs**: http://localhost:8080/redoc
 - **Health Check**: http://localhost:8080/health
 
-## 📊 API Endpoints
+## API Endpoints
 
 ### Bible Books (Single Source of Truth)
 - `GET /api/v1/books` - Get all Bible books
@@ -115,7 +116,7 @@ python main.py
 - `GET /api/v1/stats` - Database statistics
 - `GET /api/v1/translations` - Available translations
 
-## 🔧 Configuration
+## Configuration
 
 Configuration is handled through `config.py` using Pydantic Settings (equivalent to Spring Boot's `application.properties`):
 
@@ -141,7 +142,7 @@ ENVIRONMENT=production python main.py
 ENVIRONMENT=test python main.py
 ```
 
-## 💾 Database
+## sDatabase
 
 The application uses **SQLite** by default (no setup required), but can be configured for PostgreSQL or MySQL:
 

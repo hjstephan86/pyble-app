@@ -63,7 +63,7 @@ class BibleVerseCreate(BaseModel):
     translation: Translation = Field(default=Translation.KJV, description="Bible translation")
     
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "book": "John",
                 "chapter": 3,
@@ -87,7 +87,7 @@ class BibleVerseResponse(BaseModel):
     
     class Config:
         from_attributes = True  # Allows conversion from SQLAlchemy models
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "id": 1,
                 "book": "John",
@@ -111,7 +111,7 @@ class BibleBook(BaseModel):
     chapters: int = Field(..., ge=1, description="Number of chapters")
     
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "name": "Genesis",
                 "abbreviation": "Gen",
@@ -153,7 +153,7 @@ class SearchResponse(BaseModel):
     has_prev: bool
     
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "query": "love",
                 "translation": "NIV",
@@ -186,7 +186,7 @@ class ErrorResponse(BaseModel):
     details: Optional[str] = None
     
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "error": True,
                 "message": "Verse not found",
