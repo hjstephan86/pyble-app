@@ -1,88 +1,135 @@
-# main.py - Application Entry Point (Spring Boot Main Class equivalent)
-
-from fastapi import FastAPI, Depends, HTTPException, Request, status
-from fastapi.templating import Jinja2Templates
-from fastapi.staticfiles import StaticFiles
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import HTMLResponse
-from sqlalchemy.orm import Session
-import uvicorn
-import os
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
+from typing import Dict, List, Optional
+from src.models import VerseResponse, ChapterResponse, BookResponse, BibleListResponse
+from src.bible_manager import BibleManager
 
-from database import engine, get_db
-from models import Base
-from controllers import bible_router
-from config import settings
-
-# Create FastAPI app (equivalent to @SpringBootApplication)
+# Initialize FastAPI app
 app = FastAPI(
-    title="Bible App",
-    description="A simple Bible application - Python equivalent of Spring Boot",
-    version="1.0.0",
-    docs_url="/swagger",
-    redoc_url="/redoc"
+    title="Bible API",
+    description="REST API for reading Bible texts across different translations",
+    version="1.0.0"
 )
 
-# Create database tables
-Base.metadata.create_all(bind=engine)
-
-# Setup templates
+# Setup templates and static files
 templates = Jinja2Templates(directory="templates")
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
-# Create templates directory if it doesn't exist
-os.makedirs("templates", exist_ok=True)
+# Initialize bible manager
+bible_manager = BibleManager()
 
-# Include routers (equivalent to @RestController registration)
-app.include_router(bible_router, prefix="/api/v1", tags=["bible"])
+@app.on_event("startup")
+async def startup_event():
+    """Load bible texts on startup"""
+    bible_manager.load_bibles()
 
-# ============================================================================
-# Error Handlers (Spring Boot @ExceptionHandler equivalent)
-# ============================================================================
-
-@app.exception_handler(ValueError)
-async def value_error_handler(request: Request, exc: ValueError):
-    """Handle ValueError exceptions"""
-    return HTTPException(
-        status_code=status.HTTP_400_BAD_REQUEST,
-        detail=str(exc)
-    )
-
-@app.exception_handler(Exception)
-async def general_exception_handler(request: Request, exc: Exception):
-    """Handle general exceptions"""
-    return HTTPException(
-        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-        detail="Internal server error"
-    )
-
-# Root endpoint with UI
+# Web Interface Routes
 @app.get("/", response_class=HTMLResponse)
 async def read_root(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request, "title": "Bible App"})
+    """Serve the main HTML interface"""
+    translations = bible_manager.get_translation_names()
+    return templates.TemplateResponse("index.html", {
+        "request": request,
+        "translations": translations
+    })
 
-# Health check endpoint (Spring Boot Actuator style)
-@app.get("/health")
-async def health_check():
-    return {"status": "UP", "version": "1.0.0", "application": "Bible App"}
+# API Endpoints
+@app.get("/api/translations", response_model=BibleListResponse)
+async def list_translations():
+    """Get list of available Bible translations"""
+    return BibleListResponse(translations=bible_manager.get_translation_names())
 
-# Additional info endpoint
-@app.get("/info")
-async def app_info():
-    return {
-        "name": "Bible App",
-        "version": "1.0.0",
-        "description": "Python Bible application with FastAPI",
-        "framework": "FastAPI",
-        "database": "SQLite",
-        "endpoints": {
-            "ui": "/",
-            "api_docs": "/swagger",
-            "health": "/health"
-        }
-    }
+@app.get("/api/{translation}/books")
+async def get_books(translation: str):
+    """Get list of books for a specific translation"""
+    bible = bible_manager.get_bible(translation)
+    if not bible:
+        raise HTTPException(status_code=404, detail=f"Translation '{translation}' not found")
+    
+    books = []
+    for book_name in bible.get_book_names():
+        books.append({
+            "name": book_name,
+            "chapters": bible.get_chapter_count(book_name)
+        })
+    
+    return {"translation": translation, "books": books}
+
+@app.get("/api/{translation}/{book}")
+async def get_book(translation: str, book: str):
+    """Get entire book with all chapters and verses"""
+    bible = bible_manager.get_bible(translation)
+    if not bible:
+        raise HTTPException(status_code=404, detail=f"Translation '{translation}' not found")
+    
+    book_data = bible.get_book(book)
+    if book_data is None:
+        raise HTTPException(status_code=404, detail=f"Book '{book}' not found in {translation}")
+    
+    return BookResponse(
+        book=book,
+        chapters=book_data,
+        translation=translation
+    )
+
+@app.get("/api/{translation}/{book}/{chapter:int}")
+async def get_chapter(translation: str, book: str, chapter: int):
+    """Get specific chapter with all verses"""
+    bible = bible_manager.get_bible(translation)
+    if not bible:
+        raise HTTPException(status_code=404, detail=f"Translation '{translation}' not found")
+    
+    chapter_data = bible.get_chapter(book, chapter)
+    if chapter_data is None:
+        raise HTTPException(status_code=404, detail=f"Chapter {chapter} not found in {book} ({translation})")
+    
+    return ChapterResponse(
+        book=book,
+        chapter=chapter,
+        verses=chapter_data,
+        translation=translation
+    )
+
+@app.get("/api/{translation}/{book}/{chapter:int}/{verse:int}")
+async def get_verse(translation: str, book: str, chapter: int, verse: int):
+    """Get specific verse"""
+    bible = bible_manager.get_bible(translation)
+    if not bible:
+        raise HTTPException(status_code=404, detail=f"Translation '{translation}' not found")
+    
+    verse_text = bible.get_verse(book, chapter, verse)
+    if verse_text is None:
+        raise HTTPException(status_code=404, detail=f"Verse {verse} not found in {book} {chapter} ({translation})")
+    
+    return VerseResponse(
+        book=book,
+        chapter=chapter,
+        verse=verse,
+        text=verse_text,
+        translation=translation
+    )
+
+@app.get("/api/{translation}/{book}/chapters")
+async def get_chapter_list(translation: str, book: str):
+    """Get list of chapters in a book"""
+    bible = bible_manager.get_bible(translation)
+    if not bible:
+        raise HTTPException(status_code=404, detail=f"Translation '{translation}' not found")
+    
+    if book not in bible.books:
+        raise HTTPException(status_code=404, detail=f"Book '{book}' not found in {translation}")
+    
+    chapters = []
+    for chapter_num in sorted(bible.books[book].keys()):
+        chapters.append({
+            "chapter": chapter_num,
+            "verses": bible.get_verse_count(book, chapter_num)
+        })
+    
+    return {"translation": translation, "book": book, "chapters": chapters}
 
 if __name__ == "__main__":
-    print("Starting Bible App...")
-    print(f"API Documentation: http://localhost:8080/swagger")
-    print(f"Web Interface: http://localhost:8080/")
-    print(f"Health Check: http://localhost:8080/health")
-    uvicorn.run("main:app", host="0.0.0.0", port=8080, reload=True)
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)

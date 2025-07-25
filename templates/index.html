@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ title }} - Python Bible Application</title>
+    <title>Bible Reader</title>
     <style>
         * {
             margin: 0;
@@ -12,7 +12,7 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Georgia', 'Times New Roman', serif;
             line-height: 1.6;
             color: #333;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -23,742 +23,476 @@
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
-            background: rgba(255, 255, 255, 0.95);
-            margin-top: 20px;
-            margin-bottom: 20px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
         }
 
-        header {
+        .header {
             text-align: center;
-            margin-bottom: 40px;
-            padding: 20px 0;
-            border-bottom: 2px solid #667eea;
-        }
-
-        h1 {
-            color: #667eea;
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-        }
-
-        .subtitle {
-            color: #666;
-            font-size: 1.1rem;
-            font-style: italic;
-        }
-
-        .api-info {
-            background: #e8f4fd;
-            padding: 15px;
-            border-radius: 8px;
             margin-bottom: 30px;
-            border-left: 4px solid #667eea;
-        }
-
-        .api-links {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            flex-wrap: wrap;
-            margin-top: 10px;
-        }
-
-        .api-links a {
-            background: #667eea;
             color: white;
-            text-decoration: none;
-            padding: 8px 16px;
-            border-radius: 5px;
-            font-size: 0.9rem;
-            transition: background 0.3s;
         }
 
-        .api-links a:hover {
-            background: #5a6fd8;
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
         }
 
-        .section {
-            background: #f9f9f9;
-            margin: 20px 0;
+        .controls {
+            background: white;
             padding: 25px;
-            border-radius: 10px;
-            border: 1px solid #e0e0e0;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
         }
 
-        .section h2 {
-            color: #667eea;
-            margin-bottom: 20px;
-            font-size: 1.5rem;
-            border-bottom: 2px solid #667eea;
-            padding-bottom: 10px;
-        }
-
-        .form-group {
-            margin: 15px 0;
+        .control-group {
             display: flex;
-            gap: 10px;
-            align-items: center;
             flex-wrap: wrap;
+            gap: 20px;
+            align-items: center;
+            margin-bottom: 20px;
         }
 
-        .form-group label {
+        .control-group:last-child {
+            margin-bottom: 0;
+        }
+
+        label {
             font-weight: bold;
-            min-width: 80px;
             color: #555;
+            min-width: 120px;
         }
 
-        input, select, button {
-            padding: 10px;
+        select, button {
+            padding: 10px 15px;
             border: 2px solid #ddd;
-            border-radius: 5px;
-            font-size: 1rem;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
         }
 
-        input, select {
-            min-width: 150px;
-            transition: border-color 0.3s;
+        select {
+            min-width: 200px;
+            background: white;
         }
 
-        input:focus, select:focus {
+        select:focus {
             outline: none;
             border-color: #667eea;
-            box-shadow: 0 0 5px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
 
         button {
-            background: #667eea;
+            background: linear-gradient(45deg, #667eea, #764ba2);
             color: white;
             border: none;
             cursor: pointer;
-            transition: all 0.3s;
             font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         button:hover {
-            background: #5a6fd8;
             transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
 
-        button:active {
-            transform: translateY(0);
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            min-height: 400px;
         }
 
         .loading {
-            opacity: 0.7;
-            pointer-events: none;
+            text-align: center;
+            color: #666;
+            font-style: italic;
+            padding: 50px;
         }
 
-        #results {
-            margin-top: 30px;
-        }
-
-        .result {
-            background: white;
-            padding: 20px;
-            margin: 15px 0;
-            border-radius: 8px;
-            border-left: 4px solid #667eea;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            animation: fadeIn 0.5s ease-in;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        .chapter-title {
+            font-size: 1.8em;
+            color: #667eea;
+            margin-bottom: 25px;
+            text-align: center;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 15px;
         }
 
         .verse {
-            margin: 15px 0;
-            padding: 15px;
+            margin-bottom: 15px;
+            padding: 12px;
+            border-left: 4px solid #667eea;
             background: #f8f9ff;
-            border-left: 3px solid #667eea;
-            border-radius: 5px;
+            border-radius: 0 8px 8px 0;
+            transition: all 0.3s ease;
         }
 
-        .verse-reference {
+        .verse:hover {
+            background: #f0f2ff;
+            box-shadow: 0 2px 10px rgba(102, 126, 234, 0.1);
+        }
+
+        .verse-number {
             font-weight: bold;
-            color: #667eea;
-            font-size: 1.1rem;
-            margin-bottom: 8px;
+            color: #764ba2;
+            margin-right: 10px;
+            font-size: 0.9em;
         }
 
         .verse-text {
-            font-size: 1.05rem;
+            display: inline;
+            font-size: 1.1em;
             line-height: 1.7;
-            color: #333;
-            margin-bottom: 8px;
-        }
-
-        .verse-translation {
-            font-style: italic;
-            color: #666;
-            font-size: 0.9rem;
         }
 
         .error {
-            background: #ffe6e6;
-            color: #d63031;
-            border-left-color: #d63031;
+            background: #ffebee;
+            color: #c62828;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #c62828;
+            margin: 20px 0;
         }
 
-        .search-stats {
-            background: #e8f5e8;
-            color: #27ae60;
-            padding: 10px;
-            border-radius: 5px;
-            margin-bottom: 15px;
-            font-weight: bold;
-        }
-
-        .book-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 10px;
-            margin-top: 15px;
-        }
-
-        .book-item {
-            background: white;
-            padding: 10px;
-            border-radius: 5px;
-            border: 1px solid #ddd;
+        .info {
+            background: #e3f2fd;
+            color: #1565c0;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #1565c0;
+            margin: 20px 0;
             text-align: center;
         }
 
-        .book-name {
-            font-weight: bold;
-            color: #667eea;
-        }
-
-        .book-chapters {
-            color: #666;
-            font-size: 0.9rem;
-        }
-
-        .quick-actions {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin-top: 15px;
-        }
-
-        .quick-btn {
-            background: #764ba2;
-            color: white;
-            border: none;
-            padding: 8px 12px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            transition: background 0.3s;
-        }
-
-        .quick-btn:hover {
-            background: #6a4190;
-        }
-
         @media (max-width: 768px) {
-            .container {
-                margin: 10px;
-                padding: 15px;
-            }
-            
-            h1 {
-                font-size: 2rem;
-            }
-            
-            .form-group {
+            .control-group {
                 flex-direction: column;
                 align-items: stretch;
             }
-            
-            .api-links {
-                flex-direction: column;
+
+            label {
+                min-width: auto;
+                margin-bottom: 5px;
             }
-            
-            .quick-actions {
-                justify-content: center;
+
+            select, button {
+                width: 100%;
             }
+
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .container {
+                padding: 10px;
+            }
+        }
+
+        .chapter-navigation {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .chapter-nav-btn {
+            padding: 8px 12px;
+            font-size: 14px;
+            min-width: auto;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <header>
-            <h1>📖 {{ title }}</h1>
-            <p class="subtitle">Python/FastAPI Bible Application</p>
-        </header>
-
-        <div class="api-info">
-            <strong>🚀 API Endpoints Available:</strong>
-            <div class="api-links">
-                <a href="/swagger" target="_blank">📋 Swagger UI</a>
-                <a href="/redoc" target="_blank">📚 ReDoc</a>
-                <a href="/health" target="_blank">💚 Health Check</a>
-                <a href="/api/v1/stats" target="_blank">📊 Statistics</a>
-            </div>
+        <div class="header">
+            <h1>📖 Bible Reader</h1>
+            <p>Read the Bible in multiple translations</p>
         </div>
 
-        <!-- Get Specific Verse -->
-        <div class="section">
-            <h2>🔍 Get Specific Verse</h2>
-            <div class="form-group">
-                <label>Book:</label>
-                <input type="text" id="book" placeholder="e.g., John" value="John">
-                <label>Chapter:</label>
-                <input type="number" id="chapter" placeholder="3" value="3" min="1">
-                <label>Verse:</label>
-                <input type="number" id="verse" placeholder="16" value="16" min="1">
+        <div class="controls">
+            <div class="control-group">
+                <label for="translation">Translation:</label>
                 <select id="translation">
-                    <option value="KJV">King James Version</option>
-                    <option value="NIV">New International Version</option>
-                    <option value="ESV">English Standard Version</option>
-                    <option value="LUTHER1912">Luther 1912</option>
+                    <option value="">Select Translation...</option>
+                    {% for translation in translations %}
+                    <option value="{{ translation }}">{{ translation }}</option>
+                    {% endfor %}
                 </select>
-                <button onclick="getVerse()">Get Verse</button>
             </div>
-            <div class="quick-actions">
-                <button class="quick-btn" onclick="setReference('John', 3, 16)">John 3:16</button>
-                <button class="quick-btn" onclick="setReference('Psalm', 23, 1)">Psalm 23:1</button>
-                <button class="quick-btn" onclick="setReference('Romans', 8, 28)">Romans 8:28</button>
-                <button class="quick-btn" onclick="setReference('Genesis', 1, 1)">Genesis 1:1</button>
-            </div>
-        </div>
 
-        <!-- Get Complete Chapter -->
-        <div class="section">
-            <h2>📜 Get Complete Chapter</h2>
-            <div class="form-group">
-                <label>Book:</label>
-                <input type="text" id="chapterBook" placeholder="e.g., John" value="John">
-                <label>Chapter:</label>
-                <input type="number" id="chapterNum" placeholder="3" value="3" min="1">
-                <select id="chapterTranslation">
-                    <option value="KJV">King James Version</option>
-                    <option value="NIV">New International Version</option>
-                    <option value="ESV">English Standard Version</option>
-                    <option value="LUTHER1912">Luther 1912</option>
+            <div class="control-group">
+                <label for="book">Book:</label>
+                <select id="book" disabled>
+                    <option value="">Select Book...</option>
                 </select>
-                <button onclick="getChapter()">Get Chapter</button>
             </div>
-        </div>
 
-        <!-- Search Text -->
-        <div class="section">
-            <h2>🔎 Search Bible Text</h2>
-            <div class="form-group">
-                <label>Search:</label>
-                <input type="text" id="searchQuery" placeholder="e.g., love, faith, hope" value="love">
-                <label>Book:</label>
-                <input type="text" id="searchBook" placeholder="Optional - specific book">
-                <select id="searchTranslation">
-                    <option value="KJV">King James Version</option>
-                    <option value="NIV">New International Version</option>
-                    <option value="ESV">English Standard Version</option>
-                    <option value="LUTHER1912">Luther 1912</option>
+            <div class="control-group">
+                <label for="chapter">Chapter:</label>
+                <select id="chapter" disabled>
+                    <option value="">Select Chapter...</option>
                 </select>
-                <button onclick="searchText()">Search</button>
+                <button id="loadChapter" disabled>Load Chapter</button>
             </div>
         </div>
 
-        <!-- Search by Reference -->
-        <div class="section">
-            <h2>📍 Search by Reference</h2>
-            <div class="form-group">
-                <label>Reference:</label>
-                <input type="text" id="reference" placeholder="e.g., John 3:16 or Romans 8:28-30" value="John 3:16">
-                <select id="refTranslation">
-                    <option value="KJV">King James Version</option>
-                    <option value="NIV">New International Version</option>
-                    <option value="ESV">English Standard Version</option>
-                    <option value="LUTHER1912">Luther 1912</option>
-                </select>
-                <button onclick="searchByReference()">Find Reference</button>
-            </div>
-            <div class="quick-actions">
-                <button class="quick-btn" onclick="setReference2('Matthew 5:3-12')">Beatitudes</button>
-                <button class="quick-btn" onclick="setReference2('1 Corinthians 13:4-8')">Love Chapter</button>
-                <button class="quick-btn" onclick="setReference2('Psalm 91:1-16')">Psalm 91</button>
+        <div class="content">
+            <div class="info">
+                <h3>Welcome to Bible Reader</h3>
+                <p>Select a translation, book, and chapter to begin reading.</p>
             </div>
         </div>
-
-        <!-- Special Verses -->
-        <div class="section">
-            <h2>✨ Special Verses</h2>
-            <div class="form-group">
-                <button onclick="getRandomVerse()">🎲 Random Verse</button>
-                <button onclick="getVerseOfTheDay()">📅 Verse of the Day</button>
-                <button onclick="getRandomVerse('OLD')">📜 Random OT Verse</button>
-                <button onclick="getRandomVerse('NEW')">✝️ Random NT Verse</button>
-            </div>
-        </div>
-
-        <!-- Bible Books -->
-        <div class="section">
-            <h2>📚 Bible Books</h2>
-            <div class="form-group">
-                <button onclick="getBibleBooks()">All Books</button>
-                <button onclick="getBibleBooks('OLD')">Old Testament</button>
-                <button onclick="getBibleBooks('NEW')">New Testament</button>
-                <button onclick="getStats()">Database Statistics</button>
-            </div>
-        </div>
-
-        <!-- Results Area -->
-        <div id="results"></div>
     </div>
 
     <script>
-        const API_BASE = '/api/v1';
-        
-        // Utility functions
-        function showLoading(button) {
-            button.textContent = 'Loading...';
-            button.classList.add('loading');
-        }
-        
-        function hideLoading(button, originalText) {
-            button.textContent = originalText;
-            button.classList.remove('loading');
-        }
-        
-        function showResult(html) {
-            document.getElementById('results').innerHTML = 
-                `<div class="result">${html}</div>`;
-        }
-        
-        function showError(message) {
-            showResult(`<div class="error">❌ ${message}</div>`);
-        }
+        class BibleReader {
+            constructor() {
+                this.currentTranslation = '';
+                this.currentBook = '';
+                this.currentChapter = 0;
+                this.initializeEventListeners();
+            }
 
-        // Quick reference setters
-        function setReference(book, chapter, verse) {
-            document.getElementById('book').value = book;
-            document.getElementById('chapter').value = chapter;
-            document.getElementById('verse').value = verse;
-        }
-        
-        function setReference2(ref) {
-            document.getElementById('reference').value = ref;
-        }
+            initializeEventListeners() {
+                document.getElementById('translation').addEventListener('change', (e) => {
+                    this.handleTranslationChange(e.target.value);
+                });
 
-        // API Functions
-        async function getVerse() {
-            const button = event.target;
-            const originalText = button.textContent;
-            showLoading(button);
-            
-            const book = document.getElementById('book').value;
-            const chapter = document.getElementById('chapter').value;
-            const verse = document.getElementById('verse').value;
-            const translation = document.getElementById('translation').value;
-            
-            if (!book || !chapter || !verse) {
-                hideLoading(button, originalText);
-                showError('Please fill in all fields');
-                return;
+                document.getElementById('book').addEventListener('change', (e) => {
+                    this.handleBookChange(e.target.value);
+                });
+
+                document.getElementById('chapter').addEventListener('change', (e) => {
+                    this.handleChapterChange(parseInt(e.target.value));
+                });
+
+                document.getElementById('loadChapter').addEventListener('click', () => {
+                    this.loadChapter();
+                });
             }
-            
-            try {
-                const response = await fetch(`${API_BASE}/verse/${encodeURIComponent(book)}/${chapter}/${verse}?translation=${translation}`);
+
+            async handleTranslationChange(translation) {
+                if (!translation) return;
+
+                this.currentTranslation = translation;
+                this.resetBookAndChapter();
                 
-                if (response.ok) {
-                    const data = await response.json();
-                    showResult(`
-                        <div class="verse">
-                            <div class="verse-reference">${data.book} ${data.chapter}:${data.verse}</div>
-                            <div class="verse-text">${data.text}</div>
-                            <div class="verse-translation">${data.translation}</div>
-                        </div>
-                    `);
-                } else {
-                    const error = await response.json();
-                    showError(error.detail || 'Verse not found');
-                }
-            } catch (error) {
-                showError('Network error: ' + error.message);
-            } finally {
-                hideLoading(button, originalText);
-            }
-        }
-        
-        async function getChapter() {
-            const button = event.target;
-            const originalText = button.textContent;
-            showLoading(button);
-            
-            const book = document.getElementById('chapterBook').value;
-            const chapter = document.getElementById('chapterNum').value;
-            const translation = document.getElementById('chapterTranslation').value;
-            
-            if (!book || !chapter) {
-                hideLoading(button, originalText);
-                showError('Please fill in book and chapter');
-                return;
-            }
-            
-            try {
-                const response = await fetch(`${API_BASE}/chapter/${encodeURIComponent(book)}/${chapter}?translation=${translation}`);
-                
-                if (response.ok) {
-                    const data = await response.json();
-                    const versesHtml = data.verses.map(verse => `
-                        <div class="verse">
-                            <div class="verse-reference">${verse.book} ${verse.chapter}:${verse.verse}</div>
-                            <div class="verse-text">${verse.text}</div>
-                        </div>
-                    `).join('');
+                try {
+                    this.showLoading('Loading books...');
+                    const response = await fetch(`/api/${translation}/books`);
                     
-                    showResult(`
-                        <h3>${data.book} Chapter ${data.chapter} (${data.translation})</h3>
-                        <div class="search-stats">📊 ${data.verse_count} verses</div>
-                        ${versesHtml}
-                    `);
-                } else {
-                    const error = await response.json();
-                    showError(error.detail || 'Chapter not found');
-                }
-            } catch (error) {
-                showError('Network error: ' + error.message);
-            } finally {
-                hideLoading(button, originalText);
-            }
-        }
-        
-        async function searchText() {
-            const button = event.target;
-            const originalText = button.textContent;
-            showLoading(button);
-            
-            const query = document.getElementById('searchQuery').value;
-            const book = document.getElementById('searchBook').value;
-            const translation = document.getElementById('searchTranslation').value;
-            
-            if (!query || query.length < 3) {
-                hideLoading(button, originalText);
-                showError('Search query must be at least 3 characters');
-                return;
-            }
-            
-            try {
-                let url = `${API_BASE}/search?q=${encodeURIComponent(query)}&translation=${translation}`;
-                if (book) {
-                    url += `&book=${encodeURIComponent(book)}`;
-                }
-                
-                const response = await fetch(url);
-                const data = await response.json();
-                
-                if (data.results && data.results.length > 0) {
-                    const resultsHtml = data.results.map(result => `
-                        <div class="verse">
-                            <div class="verse-reference">${result.verse.book} ${result.verse.chapter}:${result.verse.verse}</div>
-                            <div class="verse-text">${result.verse.text}</div>
-                            <div class="verse-translation">${result.verse.translation} | Relevance: ${Math.round(result.relevance_score * 100)}%</div>
-                        </div>
-                    `).join('');
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
                     
-                    showResult(`
-                        <h3>🔍 Search Results for "${data.query}"</h3>
-                        <div class="search-stats">📊 Found ${data.total_count} results (showing page ${data.page})</div>
-                        ${resultsHtml}
-                    `);
-                } else {
-                    showError(`No results found for "${query}"`);
-                }
-            } catch (error) {
-                showError('Network error: ' + error.message);
-            } finally {
-                hideLoading(button, originalText);
-            }
-        }
-        
-        async function searchByReference() {
-            const button = event.target;
-            const originalText = button.textContent;
-            showLoading(button);
-            
-            const reference = document.getElementById('reference').value;
-            const translation = document.getElementById('refTranslation').value;
-            
-            if (!reference) {
-                hideLoading(button, originalText);
-                showError('Please enter a Bible reference');
-                return;
-            }
-            
-            try {
-                const response = await fetch(`${API_BASE}/search/reference?ref=${encodeURIComponent(reference)}&translation=${translation}`);
-                
-                if (response.ok) {
                     const data = await response.json();
-                    const versesHtml = data.map(verse => `
-                        <div class="verse">
-                            <div class="verse-reference">${verse.book} ${verse.chapter}:${verse.verse}</div>
-                            <div class="verse-text">${verse.text}</div>
-                            <div class="verse-translation">${verse.translation}</div>
-                        </div>
-                    `).join('');
+                    this.populateBooks(data.books);
                     
-                    showResult(`
-                        <h3>📍 Reference: ${reference}</h3>
-                        <div class="search-stats">📊 Found ${data.length} verse(s)</div>
-                        ${versesHtml}
-                    `);
-                } else {
-                    const error = await response.json();
-                    showError(error.detail || `No verses found for reference: ${reference}`);
+                } catch (error) {
+                    this.showError(`Error loading books: ${error.message}`);
                 }
-            } catch (error) {
-                showError('Network error: ' + error.message);
-            } finally {
-                hideLoading(button, originalText);
             }
-        }
-        
-        async function getRandomVerse(testament = null) {
-            const button = event.target;
-            const originalText = button.textContent;
-            showLoading(button);
-            
-            try {
-                let url = `${API_BASE}/verse/random?translation=KJV`;
-                if (testament) {
-                    url += `&testament=${testament}`;
-                }
-                
-                const response = await fetch(url);
-                
-                if (response.ok) {
+
+            handleBookChange(bookName) {
+                if (!bookName) return;
+
+                this.currentBook = bookName;
+                this.resetChapter();
+                this.loadChaptersForBook(bookName);
+            }
+
+            handleChapterChange(chapterNum) {
+                this.currentChapter = chapterNum;
+                document.getElementById('loadChapter').disabled = !chapterNum;
+            }
+
+            async loadChaptersForBook(bookName) {
+                try {
+                    const response = await fetch(`/api/${this.currentTranslation}/${encodeURIComponent(bookName)}/chapters`);
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    
                     const data = await response.json();
-                    showResult(`
-                        <h3>🎲 Random Verse${testament ? ` (${testament === 'OLD' ? 'Old Testament' : 'New Testament'})` : ''}</h3>
-                        <div class="verse">
-                            <div class="verse-reference">${data.book} ${data.chapter}:${data.verse}</div>
-                            <div class="verse-text">${data.text}</div>
-                            <div class="verse-translation">${data.translation}</div>
-                        </div>
-                    `);
-                } else {
-                    showError('No verses available');
+                    this.populateChapters(data.chapters);
+                    
+                } catch (error) {
+                    this.showError(`Error loading chapters: ${error.message}`);
                 }
-            } catch (error) {
-                showError('Network error: ' + error.message);
-            } finally {
-                hideLoading(button, originalText);
             }
-        }
-        
-        async function getVerseOfTheDay() {
-            const button = event.target;
-            const originalText = button.textContent;
-            showLoading(button);
-            
-            try {
-                const response = await fetch(`${API_BASE}/verse/today?translation=KJV`);
-                
-                if (response.ok) {
+
+            async loadChapter() {
+                if (!this.currentTranslation || !this.currentBook || !this.currentChapter) {
+                    this.showError('Please select translation, book, and chapter first.');
+                    return;
+                }
+
+                try {
+                    this.showLoading('Loading chapter...');
+                    
+                    const response = await fetch(`/api/${this.currentTranslation}/${encodeURIComponent(this.currentBook)}/${this.currentChapter}`);
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    
                     const data = await response.json();
-                    const today = new Date().toLocaleDateString();
-                    showResult(`
-                        <h3>📅 Verse of the Day - ${today}</h3>
-                        <div class="verse">
-                            <div class="verse-reference">${data.book} ${data.chapter}:${data.verse}</div>
-                            <div class="verse-text">${data.text}</div>
-                            <div class="verse-translation">${data.translation}</div>
-                        </div>
-                    `);
-                } else {
-                    showError('No verse of the day available');
+                    this.displayChapter(data);
+                    
+                } catch (error) {
+                    this.showError(`Error loading chapter: ${error.message}`);
                 }
-            } catch (error) {
-                showError('Network error: ' + error.message);
-            } finally {
-                hideLoading(button, originalText);
             }
-        }
-        
-        async function getBibleBooks(testament = null) {
-            const button = event.target;
-            const originalText = button.textContent;
-            showLoading(button);
-            
-            try {
-                let url = `${API_BASE}/books`;
-                if (testament) {
-                    url += `/${testament}`;
-                }
+
+            populateBooks(books) {
+                const bookSelect = document.getElementById('book');
+                bookSelect.innerHTML = '<option value="">Select Book...</option>';
                 
-                const response = await fetch(url);
-                const data = await response.json();
+                books.forEach(book => {
+                    const option = document.createElement('option');
+                    option.value = book.name;
+                    option.textContent = `${book.name} (${book.chapters} chapters)`;
+                    bookSelect.appendChild(option);
+                });
                 
-                const booksHtml = data.map(book => `
-                    <div class="book-item">
-                        <div class="book-name">${book.name}</div>
-                        <div class="book-chapters">${book.chapters} chapters</div>
-                        <div style="font-size: 0.8rem; color: #888;">${book.abbreviation}</div>
+                bookSelect.disabled = false;
+                this.clearContent();
+            }
+
+            populateChapters(chapters) {
+                const chapterSelect = document.getElementById('chapter');
+                chapterSelect.innerHTML = '<option value="">Select Chapter...</option>';
+                
+                chapters.forEach(chapter => {
+                    const option = document.createElement('option');
+                    option.value = chapter.chapter;
+                    option.textContent = `Chapter ${chapter.chapter} (${chapter.verses} verses)`;
+                    chapterSelect.appendChild(option);
+                });
+                
+                chapterSelect.disabled = false;
+            }
+
+            displayChapter(chapterData) {
+                const content = document.querySelector('.content');
+                
+                let html = `
+                    <div class="chapter-title">
+                        ${chapterData.book} Chapter ${chapterData.chapter}
+                        <br><small style="color: #999; font-size: 0.6em;">${chapterData.translation}</small>
                     </div>
-                `).join('');
+                `;
+
+                // Sort verses by number
+                const verseNumbers = Object.keys(chapterData.verses).map(Number).sort((a, b) => a - b);
                 
-                const testamentTitle = testament ? 
-                    (testament === 'OLD' ? 'Old Testament' : 'New Testament') : 
-                    'All Bible Books';
-                
-                showResult(`
-                    <h3>📚 ${testamentTitle}</h3>
-                    <div class="search-stats">📊 ${data.length} books</div>
-                    <div class="book-list">${booksHtml}</div>
-                `);
-            } catch (error) {
-                showError('Network error: ' + error.message);
-            } finally {
-                hideLoading(button, originalText);
-            }
-        }
-        
-        async function getStats() {
-            const button = event.target;
-            const originalText = button.textContent;
-            showLoading(button);
-            
-            try {
-                const response = await fetch(`${API_BASE}/stats`);
-                const data = await response.json();
-                
-                const translationsHtml = Object.entries(data.verses_by_translation || {})
-                    .map(([translation, count]) => `
-                        <div class="book-item">
-                            <div class="book-name">${translation}</div>
-                            <div class="book-chapters">${count} verses</div>
+                verseNumbers.forEach(verseNum => {
+                    html += `
+                        <div class="verse">
+                            <span class="verse-number">${verseNum}</span>
+                            <span class="verse-text">${chapterData.verses[verseNum]}</span>
                         </div>
-                    `).join('');
+                    `;
+                });
+
+                // Add chapter navigation
+                html += this.createChapterNavigation();
+
+                content.innerHTML = html;
+            }
+
+            createChapterNavigation() {
+                const chapterSelect = document.getElementById('chapter');
+                const options = Array.from(chapterSelect.options).slice(1); // Skip first "Select..." option
                 
-                showResult(`
-                    <h3>📊 Database Statistics</h3>
-                    <div class="verse">
-                        <div><strong>Total Verses:</strong> ${data.total_verses || 0}</div>
-                        <div><strong>Available Translations:</strong> ${data.translation_count || 0}</div>
-                        <div><strong>Books with Content:</strong> ${data.books_with_content || 0}</div>
-                        <div><strong>Total Bible Books:</strong> ${data.total_bible_books || 66}</div>
+                let navHtml = '<div class="chapter-navigation">';
+                
+                // Previous chapter button
+                const prevChapter = this.currentChapter - 1;
+                if (prevChapter >= 1 && options.some(opt => parseInt(opt.value) === prevChapter)) {
+                    navHtml += `<button class="chapter-nav-btn" onclick="bibleReader.navigateToChapter(${prevChapter})">← Chapter ${prevChapter}</button>`;
+                }
+                
+                // Next chapter button
+                const nextChapter = this.currentChapter + 1;
+                if (options.some(opt => parseInt(opt.value) === nextChapter)) {
+                    navHtml += `<button class="chapter-nav-btn" onclick="bibleReader.navigateToChapter(${nextChapter})">Chapter ${nextChapter} →</button>`;
+                }
+                
+                navHtml += '</div>';
+                return navHtml;
+            }
+
+            navigateToChapter(chapterNum) {
+                document.getElementById('chapter').value = chapterNum;
+                this.currentChapter = chapterNum;
+                this.loadChapter();
+            }
+
+            resetBookAndChapter() {
+                this.currentBook = '';
+                this.currentChapter = 0;
+                
+                const bookSelect = document.getElementById('book');
+                const chapterSelect = document.getElementById('chapter');
+                const loadButton = document.getElementById('loadChapter');
+                
+                bookSelect.innerHTML = '<option value="">Select Book...</option>';
+                bookSelect.disabled = true;
+                
+                chapterSelect.innerHTML = '<option value="">Select Chapter...</option>';
+                chapterSelect.disabled = true;
+                
+                loadButton.disabled = true;
+            }
+
+            resetChapter() {
+                this.currentChapter = 0;
+                
+                const chapterSelect = document.getElementById('chapter');
+                const loadButton = document.getElementById('loadChapter');
+                
+                chapterSelect.innerHTML = '<option value="">Select Chapter...</option>';
+                chapterSelect.disabled = true;
+                
+                loadButton.disabled = true;
+            }
+
+            showLoading(message) {
+                const content = document.querySelector('.content');
+                content.innerHTML = `<div class="loading">${message}</div>`;
+            }
+
+            showError(message) {
+                const content = document.querySelector('.content');
+                content.innerHTML = `<div class="error"><strong>Error:</strong> ${message}</div>`;
+            }
+
+            clearContent() {
+                const content = document.querySelector('.content');
+                content.innerHTML = `
+                    <div class="info">
+                        <h3>Select a Book and Chapter</h3>
+                        <p>Choose a book from the dropdown above to see available chapters.</p>
                     </div>
-                    <h4>Verses by Translation:</h4>
-                    <div class="book-list">${translationsHtml}</div>
-                `);
-            } catch (error) {
-                showError('Network error: ' + error.message);
-            } finally {
-                hideLoading(button, originalText);
+                `;
             }
         }
 
-        // Load some initial data when page loads
-        window.addEventListener('load', function() {
-            // Auto-load verse of the day
-            setTimeout(getVerseOfTheDay, 500);
-        });
+        // Initialize the Bible Reader when the page loads
+        const bibleReader = new BibleReader();
     </script>
 </body>
 </html>

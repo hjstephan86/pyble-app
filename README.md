@@ -1,178 +1,174 @@
-# Python Bible Application
+# Bible Reader FastAPI Application
 
-A bible application built with **FastAPI** that follows **Spring Boot** architecture patterns. This application demonstrates how to transform a Java Spring Boot application into a Python equivalent while maintaining the same architectural principles.
-
-## Docker
-
-Stop Docker image\
-`docker stop $(sudo docker ps -aq --filter ancestor=pyble-app) && sudo docker rm $(sudo docker ps -aq --filter ancestor=pyble-app)`
-
-Remove Docker image\
-`docker rmi pyble-app`
-
-Build Docker image\
-`docker build -t pyble-app .`
-
-Start Docker image\
-`docker run -p 8080:8080 pyble-app`
-
-## Unit Tests
-
-Run unit tests\
-`pytest`
-
-Run unit tests with coverage\
-`pytest --cov=.`
-
-Run cyclomatic complexity analysis\
-`radon cc . -a -s > tests/cc.txt`
-
-## Requirements Upgrade
-
-List outdated requirements\
-`pip list --outdated`
-
-Install outdated requirements\
-`pip list --outdated | awk 'NR > 2 {print $1}' | xargs pip install --upgrade`
-
-Freeze all requirements\
-`pip freeze > requirements.txt`
-
-## Features
-
-- **REST API** with automatic Swagger documentation
-- **Single source of truth** for Bible book names from data layer to UI
-- **Multiple Bible translations** support
-- **Advanced search functionality** with relevance scoring
-- **Complete CRUD operations** for Bible verses
-- **Web-based user interface** with modern design
-- **Spring Boot equivalent patterns** (Controllers, Services, Models, Dependency Injection)
-- **Database integration** with SQLAlchemy ORM
-- **Pagination and filtering** support
-- **Special verse features** (Random verse, Verse of the day)
-
-## Architecture
-
-This application follows **Spring Boot architectural patterns** using Python equivalents:
-
-| Spring Boot | Python FastAPI | Description |
-|-------------|----------------|-------------|
-| `@SpringBootApplication` | `FastAPI()` app | Application entry point |
-| `@RestController` | `APIRouter()` | REST endpoints |
-| `@Service` | Service classes | Business logic layer |
-| `@Entity` | SQLAlchemy models | Data models |
-| `@Autowired` | `Depends()` | Dependency injection |
-| `application.properties` | Pydantic Settings | Configuration |
-| JPA Repository | SQLAlchemy queries | Data access |
-| Maven `pom.xml` | `requirements.txt` | Dependency management |
+A FastAPI web application for reading bible texts across multiple translations with a web interface.
 
 ## Project Structure
 
 ```
 pyble-app/
+├── requirements.txt   # Python dependencies
 ├── src/
-│   ├── __init__.py
-│   ├── main.py
-│   ├── controllers.py
-│   ├── database.py
-│   ├── config.py
-│   ├── models.py
-│   └── services.py
+│   ├── main.py            # FastAPI application entry point
+│   ├── models.py          # Pydantic data models
+│   └── bible_base.py      # Abstract bible base class
+│   ├── bible_manager.py   # Bible manager class
+│   ├── elberfelder1905.py # Elberfelder 1905 German translation
+│   ├── schlachter1951.py  # Schlachter 1951 German translation
+│   ├── world.py           # World English Bible translation
+│   ├── texts/             # Bible text files directory
+│   │   ├── elberfelder1905.txt
+│   │   ├── schlachter1951.txt
+│   │   ├── world.txt
 ├── templates/
-│   └── index.html
-├── Dockerfile
-└── ... other files
+│   ├── index.html         # Web interface
+├── static/                # Static files (create if needed)
 ```
 
-## Access Application
+## Bible Translation Classes
 
-- **Web Interface**: http://localhost:8080/
-- **API Documentation**: http://localhost:8080/swagger
-- **Alternative Docs**: http://localhost:8080/redoc
-- **Health Check**: http://localhost:8080/health
+- **Elberfelder 1905**: Elberfelder 1905 German Bible translation
+- **WorldEnglishBible**: World English Bible (World) translation  
+- **Schlachter1951**: Schlachter 1951 German Bible translation
+
+## Setup Instructions
+
+### 1. Install Dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+### 2. Create Directory Structure
+
+```bash
+mkdir -p src/texts
+mkdir -p templates
+mkdir -p static
+```
+
+### 3. Add Bible Text Files
+
+Place your Bible text files in the `src/texts/` directory:
+
+- `src/texts/elberfelder1905.txt` - Elberfelder 1905 German Bible
+- `src/texts/world.txt` - World English Bible
+- `src/texts/schlachter1951.txt` - Schlachter 1951 German Bible
+
+**Expected text format:**
+```
+0#1. Mose#1#1#In the beginning God created the heavens and the earth.
+0#1. Mose#1#2#Now the earth was formless and empty. Darkness was on the surface of the deep. God's Spirit was hovering over the surface of the waters.
+```
+
+For German translations:
+```
+0#1. Mose#1#1#Im Anfang schuf Gott die Himmel und die Erde.
+0#1. Mose#1#2#Und die Erde war wüst und leer, und Finsternis war über der Tiefe; und der Geist Gottes schwebte über den Wassern.
+```
+
+### 4. Run the Application
+
+```bash
+python main.py
+```
+
+Or using uvicorn directly:
+```bash
+uvicorn main:app --reload --host 0.0.0.0 --port 8000
+```
+
+### 5. Access the Application
+
+- **Web Interface**: http://localhost:8000
+- **API Documentation**: http://localhost:8000/docs
+- **Alternative API Docs**: http://localhost:8000/redoc
 
 ## API Endpoints
 
-### Bible Books (Single Source of Truth)
-- `GET /api/v1/books` - Get all Bible books
-- `GET /api/v1/books/{testament}` - Get books by testament (OLD/NEW)
-- `GET /api/v1/books/info/{book_name}` - Get book information
+### Web Interface
+- `GET /` - Main Bible reader interface
 
-### Verses (CRUD Operations)
-- `GET /api/v1/verse/{book}/{chapter}/{verse}` - Get specific verse
-- `POST /api/v1/verse` - Create new verse
-- `PUT /api/v1/verse/{verse_id}` - Update verse
-- `DELETE /api/v1/verse/{verse_id}` - Delete verse
+### API Endpoints
+- `GET /api/translations` - List available translations
+- `GET /api/{translation}/books` - Get books for a translation
+- `GET /api/{translation}/{book}` - Get entire book
+- `GET /api/{translation}/{book}/{chapter}` - Get chapter with verses
+- `GET /api/{translation}/{book}/{chapter}/{verse}` - Get specific verse
+- `GET /api/{translation}/{book}/chapters` - List chapters in a book
 
-### Chapters
-- `GET /api/v1/chapter/{book}/{chapter}` - Get complete chapter
+## Features
 
-### Search
-- `GET /api/v1/search` - Search Bible text with pagination
-- `GET /api/v1/search/reference` - Search by reference (e.g., "John 3:16")
+### Backend Features
+- **Modular Design**: Separate modules for each Bible translation
+- **Abstract Base Class**: Consistent interface across translations
+- **Flexible Parsing**: Each translation can have custom parsing logic
+- **FastAPI Integration**: Automatic API documentation with Swagger
+- **Error Handling**: Proper HTTP status codes and error messages
 
-### Special Verses
-- `GET /api/v1/verse/random` - Get random verse
-- `GET /api/v1/verse/today` - Get verse of the day
+### Frontend Features
+- **Modern UI**: Beautiful, responsive web interface
+- **Translation Selection**: Switch between different Bible translations
+- **Book Navigation**: Browse books with chapter counts
+- **Chapter Reading**: Read full chapters with verse numbers
+- **Chapter Navigation**: Previous/Next chapter buttons
+- **Mobile Responsive**: Works on desktop and mobile devices
 
-### Statistics
-- `GET /api/v1/stats` - Database statistics
-- `GET /api/v1/translations` - Available translations
+## Extending the Application
 
-## Configuration
+### Adding New Translations
 
-Configuration is handled through `config.py` using Pydantic Settings (equivalent to Spring Boot's `application.properties`):
+1. Create a new Python file (e.g., `kjv.py`)
+2. Inherit from the `Bible` base class
+3. Implement the `load_text()` method
+4. Add the class to `bible_manager.py` mappings
+5. Place the text file in `src/texts/`
 
+Example:
 ```python
-# Environment variables or defaults
-DATABASE_URL=sqlite:///./bible.db
-DEBUG=True
-API_V1_PREFIX=/api/v1
-HOST=0.0.0.0
-PORT=8080
+from bible_base import Bible
+
+class KJV(Bible):
+    def __init__(self):
+        super().__init__("KJV")
+    
+    def load_text(self, file_path: str) -> None:
+        # Custom parsing logic here
+        pass
 ```
 
-### Different Environments
+### Custom Text Formats
 
-```bash
-# Development (default)
-ENVIRONMENT=development python main.py
+Each Bible class can implement custom parsing logic in the `load_text()` method to handle different text formats, encodings, or structures.
 
-# Production
-ENVIRONMENT=production python main.py
+## Data Structure
 
-# Testing
-ENVIRONMENT=test python main.py
+The application uses a nested hash map structure as requested:
+
+```
+bibles: Dict[str, Bible]
+├── Bible.books: Dict[str, Dict[int, Dict[int, str]]]
+    ├── book_name (str) → chapters
+    ├── chapter_number (int) → verses  
+    └── verse_number (int) → verse_text (str)
 ```
 
-## sDatabase
+## Development
 
-The application uses **SQLite** by default (no setup required), but can be configured for PostgreSQL or MySQL:
-
-### PostgreSQL Setup
+### Running in Development Mode
 ```bash
-pip install psycopg2-binary
-# Set DATABASE_URL=postgresql://user:password@localhost/bible_db
+uvicorn main:app --reload
 ```
 
-### MySQL Setup
-```bash
-pip install pymysql
-# Set DATABASE_URL=mysql+pymysql://user:password@localhost/bible_db
-```
-
-### Sample Data
-
-The application automatically creates sample verses for testing. To add your own data, use the POST endpoint:
+### Testing API Endpoints
+Use the automatic Swagger documentation at `/docs` or tools like curl:
 
 ```bash
-curl -X POST "http://localhost:8080/api/v1/verse" \
-     -H "Content-Type: application/json" \
-     -d '{
-       "book": "John",
-       "chapter": 3,
-       "verse": 16,
-       "text": "For God so loved the world...",
-       "translation": "NIV"
-     }'
+# Get translations
+curl http://localhost:8000/api/translations
+
+# Get books for Luther1912
+curl http://localhost:8000/api/Elberfelder1905/books
+
+# Get Genesis chapter 1 from WEB
+curl http://localhost:8000/api/WEB/Genesis/1
 ```
