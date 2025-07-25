@@ -16,6 +16,17 @@ Build Docker image\
 Start Docker image\
 `docker run -p 8080:8080 pyble-app`
 
+## Unit Tests
+
+Run unit tests\
+`pytest`
+
+Run unit tests with coverage\
+`pytest --cov=.`
+
+Run cyclomatic complexity analysis\
+`radon cc . -a -s > tests/cc.txt`
+
 ## Requirements Upgrade
 
 List outdated requirements\
@@ -26,14 +37,6 @@ Install outdated requirements\
 
 Freeze all requirements\
 `pip freeze > requirements.txt`
-
-## Unit Tests
-
-Run unit tests\
-`pytest`
-
-Run unit tests with coverage\
-`pytest --cov=.`
 
 ## Features
 
@@ -68,7 +71,7 @@ This application follows **Spring Boot architectural patterns** using Python equ
 ```
 pyble-app/
 ├── src/
-│   ├── __init__.py  <-- NEU hinzugefügt
+│   ├── __init__.py
 │   ├── main.py
 │   ├── controllers.py
 │   ├── database.py
