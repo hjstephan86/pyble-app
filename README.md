@@ -57,6 +57,11 @@ Run unit tests with code coverage
 python -m pytest tests/ --cov=src
 ```
 
+Run unit tests with code coverage and generate coverage report (without warnings)
+```
+python -m pytest tests/ --cov=src -p no:warnings > cov-report.txt
+```
+
 Analyze cyclomatic complexity
 ```
 radon cc src/ > cc.txt
@@ -134,6 +139,6 @@ curl http://localhost:8000/api/translations
 # Get books for Elberfelder1905
 curl http://localhost:8000/api/Elberfelder1905/books
 
-# Get Genesis chapter 1 from world
-curl http://localhost:8000/api/world/Mose/1
+# Get Esra chapter 2 from Elberfelder1905
+curl http://localhost:8000/api/Elberfelder1905/Esra/2
 ```
