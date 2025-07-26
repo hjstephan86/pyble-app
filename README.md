@@ -69,7 +69,7 @@ For German translations:
 ### 4. Run the Application
 
 ```bash
-python main.py
+python3 -m src.main
 ```
 
 Or using uvicorn directly:
@@ -82,6 +82,35 @@ uvicorn main:app --reload --host 0.0.0.0 --port 8000
 - **Web Interface**: http://localhost:8000
 - **API Documentation**: http://localhost:8000/docs
 - **Alternative API Docs**: http://localhost:8000/redoc
+
+
+## Unit Tests and Cyclomatic Complexity
+
+Run unit tests with code coverage
+```
+python -m pytest tests/ --cov=src
+```
+
+Analyze cyclomatic complexity
+```
+radon cc src/ > cc.txt
+```
+## Requirements Upgrade
+
+List outdated requirements
+```
+pip list --outdated
+```
+
+Install outdated requirements
+```
+pip list --outdated | awk 'NR > 2 {print $1}' | xargs pip install --upgrade
+```
+
+Freeze all requirements
+```
+pip freeze > requirements.txt
+```
 
 ## API Endpoints
 
