@@ -1,28 +1,26 @@
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import HTMLResponse
-from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from typing import Dict, List, Optional
+from contextlib import asynccontextmanager
 from src.models import VerseResponse, ChapterResponse, BookResponse, BibleListResponse
 from src.bible_manager import BibleManager
 
-# Initialize FastAPI app
-app = FastAPI(
-    title="Bible API",
-    description="REST API for reading Bible texts across different translations",
-    version="1.0.0"
-)
-
-# Setup templates and static files
 templates = Jinja2Templates(directory="templates")
-
-# Initialize bible manager
 bible_manager = BibleManager()
 
-@app.on_event("startup")
-async def startup_event():
+@asynccontextmanager
+async def lifespan(app: FastAPI):
     """Load bible texts on startup"""
-    bible_manager.load_bibles()
+    await bible_manager.load_bibles()
+    yield
+    print("Shutting down...")
+
+app = FastAPI(
+    title="Bible API",
+    description="REST API for reading bible texts across different translations",
+    version="1.0.0",
+    lifespan=lifespan
+)
 
 # Web Interface Routes
 @app.get("/", response_class=HTMLResponse)

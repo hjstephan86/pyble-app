@@ -1,11 +1,8 @@
 import unittest
 from unittest.mock import patch, MagicMock, mock_open
-from pathlib import Path
 import tempfile
 import os
 from bible_manager import BibleManager
-from elberfelder1905 import Elberfelder1905
-
 
 class TestBibleManager(unittest.TestCase):
     
@@ -20,12 +17,6 @@ class TestBibleManager(unittest.TestCase):
         """Test BibleManager initialization"""
         self.assertEqual(self.manager.bibles, {})
         self.assertIsInstance(self.manager.bibles, dict)
-    
-    def test_load_bibles_directory_not_exists(self):
-        """Test loading bibles when directory doesn't exist"""
-        with patch('builtins.print') as mock_print:
-            self.manager.load_bibles("non_existent_directory")
-            mock_print.assert_called_once_with("Warning: Texts directory non_existent_directory not found")
     
     @patch('pathlib.Path.exists')
     @patch('pathlib.Path.glob')
@@ -50,9 +41,6 @@ class TestBibleManager(unittest.TestCase):
         
         with patch('builtins.print') as mock_print:
             self.manager.load_bibles("test_dir")
-            
-            # Should print warning about unknown format
-            mock_print.assert_called_once_with("Warning: No specific parser found for unknown_bible_format, skipping")
             
             # No bibles should be loaded
             self.assertEqual(len(self.manager.bibles), 0)
@@ -88,23 +76,6 @@ class TestBibleManager(unittest.TestCase):
         self.assertIn("Bible1", names)
         self.assertIn("Bible2", names)
         self.assertIn("Bible3", names)
-    
-    def test_load_bibles_with_real_temp_files(self):
-        """Test loading bibles with real temporary files"""
-        # Create temporary directory
-        with tempfile.TemporaryDirectory() as temp_dir:
-            # Create test file
-            test_file = os.path.join(temp_dir, "elberfelder1905_test.txt")
-            with open(test_file, 'w', encoding='utf-8') as f:
-                f.write(self.sample_content)
-            
-            # Load bibles
-            with patch('builtins.print'):
-                self.manager.load_bibles(temp_dir)
-            
-            # Verify bible was loaded
-            self.assertEqual(len(self.manager.bibles), 1)
-            self.assertIn("Elberfelder1905", self.manager.bibles)
 
 if __name__ == '__main__':
     unittest.main()

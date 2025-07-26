@@ -11,7 +11,7 @@ class BibleManager:
     def __init__(self):
         self.bibles: Dict[str, Bible] = {}
     
-    def load_bibles(self, texts_dir: str = "src/texts/"):
+    async def load_bibles(self, texts_dir: str = "src/texts/"):
         """Load all bible texts from directory"""
         texts_path = Path(texts_dir)
         if not texts_path.exists():

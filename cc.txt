@@ -4,14 +4,14 @@ src/models.py
     C 17:0 BookResponse - A
     C 22:0 BibleListResponse - A
 src/main.py
-    F 114:0 get_chapter_list - A
-    F 44:0 get_books - A
-    F 60:0 get_book - A
-    F 77:0 get_chapter - A
-    F 95:0 get_verse - A
-    F 23:0 startup_event - A
-    F 29:0 read_root - A
-    F 39:0 list_translations - A
+    F 112:0 get_chapter_list - A
+    F 42:0 get_books - A
+    F 58:0 get_book - A
+    F 75:0 get_chapter - A
+    F 93:0 get_verse - A
+    F 12:0 lifespan - A
+    F 27:0 read_root - A
+    F 37:0 list_translations - A
 src/bible_manager.py
     M 14:4 BibleManager.load_bibles - B
     C 8:0 BibleManager - A
