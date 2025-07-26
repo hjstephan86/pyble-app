@@ -1,44 +1,44 @@
 src/models.py
-    C 4:0 VerseResponse - A
-    C 11:0 ChapterResponse - A
-    C 17:0 BookResponse - A
-    C 22:0 BibleListResponse - A
+    C 6:0 VerseResponse - A
+    C 14:0 ChapterResponse - A
+    C 21:0 BookResponse - A
+    C 27:0 BibleListResponse - A
 src/main.py
-    F 112:0 get_chapter_list - A
-    F 42:0 get_books - A
-    F 58:0 get_book - A
-    F 75:0 get_chapter - A
-    F 93:0 get_verse - A
-    F 12:0 lifespan - A
-    F 27:0 read_root - A
-    F 37:0 list_translations - A
+    F 130:0 get_chapter_list - A
+    F 48:0 get_books - A
+    F 66:0 get_book - A
+    F 84:0 get_chapter - A
+    F 105:0 get_verse - A
+    F 15:0 lifespan - A
+    F 32:0 read_root - A
+    F 42:0 list_translations - A
 src/bible_manager.py
-    M 14:4 BibleManager.load_bibles - B
-    C 8:0 BibleManager - A
-    M 11:4 BibleManager.__init__ - A
-    M 53:4 BibleManager.get_bible - A
-    M 57:4 BibleManager.get_translation_names - A
+    M 16:4 BibleManager.load_bibles - B
+    C 10:0 BibleManager - A
+    M 13:4 BibleManager.__init__ - A
+    M 55:4 BibleManager.get_bible - A
+    M 59:4 BibleManager.get_translation_names - A
 src/world.py
-    C 3:0 WorldEnglishBible - A
-    M 9:4 WorldEnglishBible.load_text - A
-    M 6:4 WorldEnglishBible.__init__ - A
+    C 4:0 WorldEnglishBible - A
+    M 10:4 WorldEnglishBible.load_text - A
+    M 7:4 WorldEnglishBible.__init__ - A
 src/elberfelder1905.py
-    C 3:0 Elberfelder1905 - A
-    M 9:4 Elberfelder1905.load_text - A
-    M 6:4 Elberfelder1905.__init__ - A
+    C 4:0 Elberfelder1905 - A
+    M 10:4 Elberfelder1905.load_text - A
+    M 7:4 Elberfelder1905.__init__ - A
 src/bible_base.py
-    M 53:4 Bible._parse_text - B
-    M 16:4 Bible.get_verse - A
-    C 4:0 Bible - A
-    M 24:4 Bible.get_chapter - A
-    M 47:4 Bible.get_verse_count - A
-    M 31:4 Bible.get_book - A
-    M 41:4 Bible.get_chapter_count - A
-    M 7:4 Bible.__init__ - A
-    M 12:4 Bible.load_text - A
-    M 37:4 Bible.get_book_names - A
-    M 97:4 Bible._normalize_german_book_name - A
+    M 54:4 Bible._parse_text - B
+    M 17:4 Bible.get_verse - A
+    C 5:0 Bible - A
+    M 25:4 Bible.get_chapter - A
+    M 48:4 Bible.get_verse_count - A
+    M 32:4 Bible.get_book - A
+    M 42:4 Bible.get_chapter_count - A
+    M 8:4 Bible.__init__ - A
+    M 13:4 Bible.load_text - A
+    M 38:4 Bible.get_book_names - A
+    M 100:4 Bible._normalize_german_book_name - A
 src/schlachter1951.py
-    C 3:0 Schlachter1951 - A
-    M 9:4 Schlachter1951.load_text - A
-    M 6:4 Schlachter1951.__init__ - A
+    C 4:0 Schlachter1951 - A
+    M 10:4 Schlachter1951.load_text - A
+    M 7:4 Schlachter1951.__init__ - A
