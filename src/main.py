@@ -15,7 +15,6 @@ app = FastAPI(
 
 # Setup templates and static files
 templates = Jinja2Templates(directory="templates")
-app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # Initialize bible manager
 bible_manager = BibleManager()
