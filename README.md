@@ -142,3 +142,11 @@ curl http://localhost:8000/api/Elberfelder1905/books
 # Get Esra chapter 2 from Elberfelder1905
 curl http://localhost:8000/api/Elberfelder1905/Esra/2
 ```
+
+## Compare RES of Python and Java
+
+Both projects [https://github.com/hjstephan86/bible-app](https://github.com/hjstephan86/bible-app) as Spring Boot application and [https://github.com/hjstephan86/pyble-app](https://github.com/hjstephan86/pyble-app) as FastAPI application were started. While running and idling (without any request) the required resident set size (RES) of each application process was:
+- 460396 KB (approx. 460 MB) for java, in total 460 MB.
+- 85556 KB (approx. 85 MB) for python3, in total 177,7 MB.
+
+Notice, RES (Resident Set Size) is the actual amount of physical memory (RAM) in KB that the process is currently using and that is held in RAM (not swapped out). **This is the important metric for real memory usage**. The missing resources for FastAPI have a size of 106,8 MB - 14,1 MB = 92,7 MB. For bible texts Elberfelder1905, Schlachter1951, WorldEnglishBible of FastAPI 14,1 MB are used. The resource folder of the Spring Boot application has a size of 106,8 MB which gives a total of 177,7 MB of required memory, i.e., **python3 uses 38,63% RES of java**.
